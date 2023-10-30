@@ -1,0 +1,162 @@
+import pandas as pd
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier # Import Decision Tree Classifier
+from sklearn.model_selection import train_test_split # Import train_test_split function
+from sklearn import metrics #Import scikit-learn metrics module for accuracy calculation
+from sklearn.linear_model import LogisticRegression
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.gaussian_process import GaussianProcessClassifier
+from sklearn.multiclass import OutputCodeClassifier
+from sklearn.svm import SVC
+from sklearn.preprocessing import LabelBinarizer
+from sklearn.metrics import classification_report
+import tensorflow as tf
+
+import matplotlib.pyplot as plt
+import numpy as np
+import argparse
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn import metrics
+
+
+
+CSVFILE = 'DataForTraining.csv'
+#SVFILE = 'C:\\Users\\dawid\\Desktop\\Json_Pyton\\Repo\\New_RefactoredScirpts\\FreqIMUDataForTraining.csv'
+
+##Loading data
+col_names = ['StdDevA','VarianceA','MedianA','MinimumA','MaximumA','PeakToPeakA','StdDevB','VarianceB','MedianB','MinimumB','MaximumB','PeakToPeakB','StdDevC','VarianceC','MedianC','MinimumC','MaximumC','PeakToPeakC','IaMax','IaMin','IaPTP','IbMax','IbMin','IbPTP','IcMax','IcMin','IcPTP','label']
+
+# load dataset
+csvFile = pd.read_csv(CSVFILE, header=None, names=col_names)
+#print(csvFile.head())
+
+##Feature selection
+#split dataset in features and target variable
+feature_cols = ['StdDevA','VarianceA','MedianA','MinimumA','MaximumA','PeakToPeakA','StdDevB','VarianceB','MedianB','MinimumB','MaximumB','PeakToPeakB','StdDevC','VarianceC','MedianC','MinimumC','MaximumC','PeakToPeakC','IaMax','IaMin','IaPTP','IbMax','IbMin','IbPTP','IcMax','IcMin','IcPTP']
+X = csvFile[feature_cols] # Features
+y = csvFile.label # Target variable
+#print(len(y))
+# Split dataset into training set and test set
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3,stratify=y) # 70% training and 30% test
+
+
+###########################################################################################
+
+"""Svm = SVC(kernel='linear') # Linear Kernel
+Svm=Svm.fit(X_train, y_train)
+Svmpred = Svm.predict(X_test)
+print("Accuracy SVM:",metrics.accuracy_score(y_test, Svmpred))
+
+############################################################################################
+# instantiate the model (using the default parameters)
+LogisticRegresion = LogisticRegression(random_state=42,solver='liblinear')
+
+# fit the model with data
+LogisticRegresion.fit(X_train, y_train)
+
+LRpred = LogisticRegresion.predict(X_test)
+print("Accuracy Logistic Regresion:",metrics.accuracy_score(y_test, LRpred))
+############################################################################################
+# Create Decision Tree classifer object
+DecisionTreeClassifer = DecisionTreeClassifier()
+
+# Train Decision Tree Classifer
+DecisionTreeClassifer = DecisionTreeClassifer.fit(X_train,y_train)
+
+#Predict the response for test dataset
+DTpred = DecisionTreeClassifer.predict(X_test)
+print("Accuracy Decision Tree:",metrics.accuracy_score(y_test, DTpred))
+##############################################################################################
+Knn = KNeighborsClassifier(n_neighbors=3)
+Knn = Knn.fit(X_train,y_train)
+Knnpred = Knn.predict(X_test)
+print("Accuracy K-nn:",metrics.accuracy_score(y_test, Knnpred))
+
+
+
+LDA = LinearDiscriminantAnalysis()
+LDA = LDA.fit(X_train, y_train)
+LDApred = LDA.predict(X_test)
+
+print("Accuracy Linear Discrimnant Analysis:",metrics.accuracy_score(y_test, LDApred))
+GPC = GaussianProcessClassifier()
+GPC = GPC.fit(X_train, y_train)
+GPCpred = GPC.predict(X_test)
+
+print("Accuracy Gaussian Process Classifier:",metrics.accuracy_score(y_test, GPCpred))
+"""
+model  = {
+    1:LogisticRegression(random_state=42,solver='liblinear'),
+    2:DecisionTreeClassifier(),
+    3:KNeighborsClassifier(n_neighbors=3),
+    4:LinearDiscriminantAnalysis(),
+    5:GaussianProcessClassifier(),
+    6: SVC(kernel='linear'),
+}
+
+modelNames  = {
+    1:"LogisticRegression",
+    2:"Decision Tree",
+    3:"K-nn",
+    4:"Linear Discrimnant Analysis",
+    5:"Gaussian Process Classifier",
+    6:"SVM",
+}
+ECOCpred = []
+
+#Predict the response for test dataset
+for i in range(1,7):
+
+    ECOC = OutputCodeClassifier(model[i])
+    ECOC= ECOC.fit(X_train, y_train)
+    ECOCpred.append(ECOC.predict(X_test))
+    print(f"Accuracy ECOC+{modelNames[i]}:",metrics.accuracy_score(y_test, ECOCpred[i-1]))
+
+
+
+
+
+def ConfusionMatrix(y_test,y_pred,class_names):
+
+    cnf_matrix = metrics.confusion_matrix(y_test, y_pred)
+    fig, ax = plt.subplots()
+    tick_marks = np.arange(len(class_names))
+    plt.xticks(tick_marks, class_names)
+    plt.yticks(tick_marks, class_names)
+    # create heatmap
+    sns.heatmap(pd.DataFrame(cnf_matrix), annot=True, cmap="YlGnBu" ,fmt='g')
+    ax.xaxis.set_label_position("top")
+    plt.tight_layout()
+    
+    plt.ylabel('Actual label')
+    plt.xlabel('Predicted label')
+    plt.show()
+"""
+y_train = tf.keras.utils.to_categorical(y_train)
+y_test = tf.keras.utils.to_categorical(y_test)
+model = tf.keras.models.Sequential()
+model.add(tf.keras.layers.Dense(27,input_shape=(27,),activation="relu"))
+model.add(tf.keras.layers.Dense(128,activation="relu"))
+model.add(tf.keras.layers.Dense(3,activation="softmax"))
+model.compile(optimizer='Adam',loss="categorical_crossentropy",metrics="accuracy")
+H = model.fit(X_train,y_train,validation_data=(X_test,y_test),epochs=10,batch_size=12)
+prediction  =model.predict(X_test)
+print("Accuracy K-nn:",metrics.accuracy_score(y_test, prediction))
+"""
+"""ConfusionMatrix(y_test,Svmpred,["idle,healthy,faulty"])
+ConfusionMatrix(y_test,LRpred,["idle,healthy,faulty"])
+ConfusionMatrix(y_test,DTpred,["idle,healthy,faulty"])
+ConfusionMatrix(y_test,Knnpred,["idle,healthy,faulty"])
+ConfusionMatrix(y_test,LDApred,["idle,healthy,faulty"])
+ConfusionMatrix(y_test,GPCpred,["idle,healthy,faulty"])"""
+ConfusionMatrix(y_test,ECOCpred[0],["idle,healthy,faulty"])
+ConfusionMatrix(y_test,ECOCpred[1],["idle,healthy,faulty"])
+ConfusionMatrix(y_test,ECOCpred[2],["idle,healthy,faulty"])
+ConfusionMatrix(y_test,ECOCpred[3],["idle,healthy,faulty"])
+ConfusionMatrix(y_test,ECOCpred[4],["idle,healthy,faulty"])
+ConfusionMatrix(y_test,ECOCpred[5],["idle,healthy,faulty"])
+
+
+dummy = 0
