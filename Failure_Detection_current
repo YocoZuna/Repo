@@ -44,7 +44,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3,stratify
 
 ###########################################################################################
 
-"""Svm = SVC(kernel='linear') # Linear Kernel
+Svm = SVC(kernel='linear') # Linear Kernel
 Svm=Svm.fit(X_train, y_train)
 Svmpred = Svm.predict(X_test)
 print("Accuracy SVM:",metrics.accuracy_score(y_test, Svmpred))
@@ -69,24 +69,36 @@ DecisionTreeClassifer = DecisionTreeClassifer.fit(X_train,y_train)
 DTpred = DecisionTreeClassifer.predict(X_test)
 print("Accuracy Decision Tree:",metrics.accuracy_score(y_test, DTpred))
 ##############################################################################################
+# Create KNN classifer object
 Knn = KNeighborsClassifier(n_neighbors=3)
+
+# Train KNN Classifer
 Knn = Knn.fit(X_train,y_train)
+
+#Predict the response for test dataset
 Knnpred = Knn.predict(X_test)
 print("Accuracy K-nn:",metrics.accuracy_score(y_test, Knnpred))
-
-
-
+##############################################################################################
+# Create Linear Discriminant Analysis classifer object
 LDA = LinearDiscriminantAnalysis()
+
+# Train Linear Discriminant Analysis Classifer
 LDA = LDA.fit(X_train, y_train)
+
+#Predict the response for test dataset
 LDApred = LDA.predict(X_test)
-
 print("Accuracy Linear Discrimnant Analysis:",metrics.accuracy_score(y_test, LDApred))
+##############################################################################################
+# Create Gaussian Process classifer object
 GPC = GaussianProcessClassifier()
-GPC = GPC.fit(X_train, y_train)
-GPCpred = GPC.predict(X_test)
 
+# Train Gaussian Process Classifer
+GPC = GPC.fit(X_train, y_train)
+
+#Predict the response for test dataset
+GPCpred = GPC.predict(X_test)
 print("Accuracy Gaussian Process Classifier:",metrics.accuracy_score(y_test, GPCpred))
-"""
+
 model  = {
     1:LogisticRegression(random_state=42,solver='liblinear'),
     2:DecisionTreeClassifier(),
@@ -130,7 +142,7 @@ def ConfusionMatrix(y_test,y_pred,class_names):
     ax.xaxis.set_label_position("top")
     plt.tight_layout()
     
-    plt.ylabel('Actual label')
+    plt.ylabel('True label')
     plt.xlabel('Predicted label')
     plt.show()
 """
@@ -145,12 +157,12 @@ H = model.fit(X_train,y_train,validation_data=(X_test,y_test),epochs=10,batch_si
 prediction  =model.predict(X_test)
 print("Accuracy K-nn:",metrics.accuracy_score(y_test, prediction))
 """
-"""ConfusionMatrix(y_test,Svmpred,["idle,healthy,faulty"])
+ConfusionMatrix(y_test,Svmpred,["idle,healthy,faulty"])
 ConfusionMatrix(y_test,LRpred,["idle,healthy,faulty"])
 ConfusionMatrix(y_test,DTpred,["idle,healthy,faulty"])
 ConfusionMatrix(y_test,Knnpred,["idle,healthy,faulty"])
 ConfusionMatrix(y_test,LDApred,["idle,healthy,faulty"])
-ConfusionMatrix(y_test,GPCpred,["idle,healthy,faulty"])"""
+ConfusionMatrix(y_test,GPCpred,["idle,healthy,faulty"])
 ConfusionMatrix(y_test,ECOCpred[0],["idle,healthy,faulty"])
 ConfusionMatrix(y_test,ECOCpred[1],["idle,healthy,faulty"])
 ConfusionMatrix(y_test,ECOCpred[2],["idle,healthy,faulty"])
