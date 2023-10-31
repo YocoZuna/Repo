@@ -43,9 +43,13 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3,stratify
 
 
 ###########################################################################################
-
+# instantiate the model (using the default parameters)
 Svm = SVC(kernel='linear') # Linear Kernel
+
+# fit the model with data
 Svm=Svm.fit(X_train, y_train)
+
+#Predict the response for test dataset
 Svmpred = Svm.predict(X_test)
 print("Accuracy SVM:",metrics.accuracy_score(y_test, Svmpred))
 
@@ -56,6 +60,7 @@ LogisticRegresion = LogisticRegression(random_state=42,solver='liblinear')
 # fit the model with data
 LogisticRegresion.fit(X_train, y_train)
 
+#Predict the response for test dataset
 LRpred = LogisticRegresion.predict(X_test)
 print("Accuracy Logistic Regresion:",metrics.accuracy_score(y_test, LRpred))
 ############################################################################################
@@ -123,7 +128,7 @@ for i in range(1,7):
 
     ECOC = OutputCodeClassifier(model[i])
     ECOC= ECOC.fit(X_train, y_train)
-    ECOCpred.append(ECOC.predict(X_test))
+    ECOCpred.append(ECOC.predict(X_test)) 
     print(f"Accuracy ECOC+{modelNames[i]}:",metrics.accuracy_score(y_test, ECOCpred[i-1]))
 
 
